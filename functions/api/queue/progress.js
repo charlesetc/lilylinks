@@ -1,9 +1,11 @@
+import { listKeys } from "../utils";
+
 function normalizeLink(href, site) {
   let link =
     href.startsWith("https://") || href.startsWith("http://")
       ? new URL(href)
       : new URL(href, site);
-  return link;
+  return link.toString();
 }
 
 async function getLinks(site) {
@@ -25,43 +27,27 @@ async function getLinks(site) {
   return links;
 }
 
-async function listKeys(kv) {
-  let kvResults = await kv.list();
-  return kvResults.keys.map(({ name }) => name);
-}
-
 // TODO: make it use POST
 export async function onRequestGet(context) {
-  let index = {};
-  let toIndex = (await listKeys(context.env.Sites)).map((site) => ({
-    site,
-    depth: 0,
-  }));
-
-  function queueForIndex(site, depth) {
-    if (!(site in index)) {
-      index[site] = true;
-      toIndex.push({ site, depth });
-    }
-  }
-
-  let current;
-  while ((current = toIndex.pop())) {
-    let { site, depth } = current;
-    console.log("hi there", depth);
+  let Queue = context.env.Queue;
+  let Index = context.env.Index;
+  let toIndex = await listKeys(Queue, { limit: 20 });
+  for (const site of toIndex) {
+    let { depth } = JSON.parse(await Queue.get(site));
+    await Queue.delete(site);
     if (depth < 10) {
       let links = await getLinks(site);
-      index[site] = links;
+      Index.put(site, JSON.stringify(links));
       for (const link of links) {
-        // only crawl domains we have been given
-        if (new URL(site).host === new URL(link).host) {
-          queueForIndex(link, depth + 1);
+        const indexed = await Index.get(link);
+        if (indexed === null && new URL(site).host === new URL(link).host) {
+          await Queue.put(link, JSON.stringify({ depth: depth + 1 }));
         }
       }
     }
   }
 
-  return new Response(JSON.stringify(index), {
+  return new Response(JSON.stringify({ success: true }), {
     headers: { "Content-Type": "application/json" },
   });
 }
