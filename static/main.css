@@ -29,10 +29,16 @@ body {
   line-height: 1.5rem;
 }
 
+:root {
+  --main-width: 590px;
+  --main-padding: 30px 20px;
+  --main-margin: 40px;
+}
+
 main {
-  width: 590px;
-  padding: 30px 20px;
-  margin: 40px;
+  width: var(--main-width);
+  padding: var(--main-padding);
+  margin: var(--main-margin);
   border: 2px solid black;
   box-shadow: 6px 6px 0px black;
   background-color: #d4cfff;
@@ -66,4 +72,31 @@ button {
   padding: 5px 7px;
   cursor: pointer;
   border: 1px solid black;
+}
+
+a:not(.button) {
+  /* color: rgb(255, 0, 187); */
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.title {
+  font-weight: bold;
+}
+
+#flash:not(.visible) {
+  display: none;
+}
+
+#flash {
+  border: 1px solid black;
+  background: rgb(210, 255, 210);
+  width: var(--main-width);
+  padding: var(--main-padding);
+  margin: var(--main-margin);
+  border: 2px solid black;
+}
+
+#flash.failure {
+  background: rgb(255, 210, 210);
 }

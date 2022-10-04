@@ -17,39 +17,67 @@
   <body>
     <main>
       <section>
-        <p class="title">Lilylinks</p>
-        <p>=========</p>
-        <p>Open-source backlink index engine</p>
+        <p class="title">Lilylinks <br />=========</p>
+        <p>Open-source backlink engine!</p>
       </section>
 
       <section>
-        <p>Embed the backlinks to your website:</p>
+        <p>Add your website to the index:</p>
+        <form method="post" action="/api/sites/new">
+          <input
+            required
+            autofocus
+            name="site"
+            type="text"
+            style="width: 41.7ch"
+            onclick="this.select()"
+            placeholder="example.com"
+          />
+          <button type="submit">Go</button>
+        </form>
+      </section>
+
+      <section>
+        <p>Embed backlinks on your website:</p>
         <input
           class="embed"
           readonly
           type="text"
-          style="width: 47.3ch"
+          style="width: 46.4ch"
           onclick="this.select()"
-          value="<script src='lilylinks.xyz/embed.js'></script>"
+          value="<script src='https://lilylinks.xyz/embed.js'></script>"
         />
-      </section>
-
-      <section>
-        <p>Preview the backlinks to your website:</p>
-        <input
-          type="text"
-          style="width: 42.8ch"
-          onclick="this.select()"
-          placeholder="example.com"
-        />
-        <button type="submit">Go</button>
-      </section>
-
-      <section>
-        <a class="button" href="https://github.com/charlesetc/lilylinks"
-          >Submit a new website</a
-        >
       </section>
     </main>
+    <div id="flash"></div>
+
+    <script>
+      let flash = document.getElementById("flash");
+
+      function displayFlash() {
+        if (window.location.pathname === "/flash/add/success") {
+          flash.classList.add("visible");
+          flash.innerText = "Successfully added site";
+          window.history.replaceState(null, null, "/");
+        } else if (window.location.pathname === "/flash/add/parse-fail") {
+          flash.classList.add("visible");
+          flash.classList.add("failure");
+          flash.innerText = "Failed to add site! Make sure it is a valid url.";
+          window.history.replaceState(null, null, "/");
+        } else if (window.location.pathname === "/flash/add/load-fail") {
+          flash.classList.add("visible");
+          flash.classList.add("failure");
+          flash.innerText =
+            "Failed to add site! It does not seem to be up and runnig.";
+          window.history.replaceState(null, null, "/");
+        }
+      }
+
+      function hideFlash() {
+        flash.classList.remove("visible");
+      }
+      displayFlash();
+      setTimeout(hideFlash, 3000);
+    </script>
   </body>
 </html>
