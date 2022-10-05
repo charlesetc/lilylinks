@@ -169,3 +169,8 @@ dist
 # wrangler project
 
 .dev.vars
+
+# Redis
+
+redis/appendonlydir
+redis/dump.rdb
