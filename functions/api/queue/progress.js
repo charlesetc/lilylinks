@@ -37,7 +37,7 @@ export async function onRequestGet(context) {
     await Queue.delete(site);
     if (depth < 10) {
       let links = await getLinks(site);
-      Index.put(site, JSON.stringify(links));
+      await Index.put(site, JSON.stringify(links));
       for (const link of links) {
         const indexed = await Index.get(link);
         if (indexed === null && new URL(site).host === new URL(link).host) {

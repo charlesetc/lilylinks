@@ -27,6 +27,6 @@ export async function onRequestPost(context) {
   } catch {
     return loadFail();
   }
-  context.env.Sites.put(site, "true");
-  return Response.redirect(new URL(site, context.request.url));
+  await context.env.Sites.put(site, "true");
+  return Response.redirect(new URL("/flash/add/success", context.request.url));
 }
